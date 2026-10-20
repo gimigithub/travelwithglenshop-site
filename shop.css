@@ -1,0 +1,61 @@
+/* Shop layer on top of travelwithglen.com global.css (same tokens, same fonts). */
+.shop-word{color:var(--accent);font-weight:800}
+.disclosure-bar{background:var(--sand);border-bottom:1px solid var(--line);color:var(--muted);font-size:14px;text-align:center;padding:8px 16px}
+.disclosure-bar a{color:var(--link)}
+.page-pad{padding-top:28px;padding-bottom:56px}
+.narrow{max-width:760px}
+.crumbs{font-size:14px;color:var(--muted);margin-bottom:14px}
+.crumbs a{color:var(--link);text-decoration:none}
+.crumbs a:hover{text-decoration:underline}
+.shop-hero{background:linear-gradient(135deg,var(--forest-dark),var(--forest-mid));color:#fff;padding:64px 0 56px}
+.shop-hero .eyebrow{color:#F3C9A8}
+.shop-hero .h-display{color:#fff;max-width:14ch;margin:8px 0 14px}
+.shop-hero .lede{color:#E3EEE8;max-width:62ch}
+.shop-hero .btn-ghost{color:#fff;border-color:rgba(255,255,255,.55)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.wraprow{margin:18px 0}
+.ctiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:18px}
+.ctile{display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;text-decoration:none;color:var(--ink);transition:transform .15s, box-shadow .15s}
+.ctile:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--shadow)}
+.ctile-img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;border-radius:10px}
+.ctile strong{font-family:var(--display);font-size:19px}
+.ctile span{color:var(--body);font-size:15px}
+.ctile em{font-style:normal;color:var(--accent);font-weight:600;font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:18px 0 28px}
+.pcard{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pcard-img{display:block;background:#fff;aspect-ratio:1/1;padding:10px}
+.pcard-img img,.noimg{width:100%;height:100%;object-fit:contain;display:block}
+.noimg{background:var(--card-img);min-height:160px}
+.pcard-body{display:flex;flex-direction:column;gap:10px;padding:12px;flex:1}
+.pcard-title{color:var(--ink);text-decoration:none;font-weight:600;line-height:1.3;flex:1}
+.pcard-title:hover{color:var(--link)}
+.pcard-buy{display:inline-block;text-align:center;background:var(--accent);color:#fff;border-radius:8px;padding:8px 10px;font-weight:700;font-size:14px;text-decoration:none}
+.pcard-buy:hover{background:var(--accent-dark)}
+.badge{position:absolute;top:8px;left:8px;background:var(--forest);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;z-index:1}
+.badge-inline{position:static;display:inline-block;margin-bottom:8px}
+.coll{margin-top:28px}
+.head-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pdp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:start}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gallery .gimg{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px;object-fit:contain;aspect-ratio:1/1;padding:8px}
+.gallery .gimg:first-child{grid-column:1/-1}
+.pdp-title{font-size:clamp(24px,3vw,34px);line-height:1.15}
+.pdp-why{color:var(--body)}
+.small-note{color:var(--muted);font-size:14px;margin-top:10px}
+.quick{padding-left:20px;color:var(--body)}
+.quick li{margin:6px 0}
+.flywheel{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:36px 0;padding:20px;border:1px solid var(--callout-border);border-radius:14px;background:var(--sand)}
+.flywheel div{display:flex;flex-direction:column;gap:4px}
+.flywheel a{font-family:var(--display);font-size:19px;color:var(--link);text-decoration:none}
+.flywheel a:hover{text-decoration:underline}
+.flywheel small{color:var(--muted)}
+.postlist{list-style:none;padding:0}
+.postlist li{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.postlist a{color:var(--ink);text-decoration:none}
+.postlist small{color:var(--muted)}
+@media (max-width:760px){
+  .pdp{grid-template-columns:1fr}
+  .flywheel{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .shop-hero{padding:44px 0 40px}
+}
