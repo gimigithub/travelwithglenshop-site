@@ -103,7 +103,7 @@ def products_in_cat(cid):
 # ---------- layout ----------
 NAV = [(f"{CAT_BY_SLUG[c['cat']]['permalink']}", c["name"].split(" and ")[0].replace("Travel With Glen ", "")) for c in C.COLLECTIONS[:5]]
 
-def layout(title, desc, path, body, noindex=False, jsonld=None, og_image=None):
+def layout(title, desc, path, body, noindex=False, jsonld=None, og_image=None, extra_head=""):
     canon = C.SITE + path
     ogi = C.SITE + (og_image or "/logo-twg.webp")
     nav = "".join(f'<a href="{path_of(h)}">{esc(l)}</a>' for h, l in NAV)
@@ -128,6 +128,7 @@ def layout(title, desc, path, body, noindex=False, jsonld=None, og_image=None):
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="/global.css"><link rel="stylesheet" href="/shop.css">
+{extra_head}
 {ld}
 </head>
 <body>
@@ -210,6 +211,75 @@ def write(path, content, sitemap=True, lastmod=None):
     WRITTEN.append(path)
     if sitemap: SITEMAP.append((path, lastmod or TODAY))
 
+
+# ---------- home hero, carousel, motion (carried over from the WordPress/Elementor home page) ----------
+HAS_VIDEO = os.path.exists(os.path.join(ROOT, "assets", "video", "shop-intro.mp4"))
+HOME_HEAD = (('<link rel="preload" as="image" href="/video/shop-intro-poster.webp">' if HAS_VIDEO else '<link rel="preload" as="image" href="/img/hero/gear-14.webp">')
+    + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Londrina+Shadow&family=Open+Sans:wdth,wght@75,400;75,600&display=swap">')
+
+# Slides from the old home carousel, each now pointing at the collection it shows.
+CAROUSEL = [
+    ("gear-11", "Leather bags and travel accessories", "apparel"),
+    ("gear-12", "Backpacks and boots on the trail", "outdoor"),
+    ("gear-13", "Personal care and comfort for the road", "care"),
+    ("gear-14", "Layers, boots and a bag for every day out", "apparel"),
+    ("gear-15", "Friends, shoes and a camera at the ready", "tech"),
+    ("gear-16", "Luggage lined up and ready to go", "packing"),
+    ("gear-17", "Tech, chargers and gadgets for the trip", "tech"),
+]
+
+def home_hero():
+    media = ('<video class="vh-video" id="vh-video" muted playsinline autoplay preload="auto" poster="/video/shop-intro-poster.webp" aria-hidden="true">'
+             '<source src="/video/shop-intro.webm" type="video/webm"><source src="/video/shop-intro.mp4" type="video/mp4"></video>'
+             if HAS_VIDEO else '<img class="vh-video" src="/img/hero/gear-14.webp" alt="" aria-hidden="true">')
+    return f"""<section class="video-hero" id="video-hero">{media}<div class="vh-shade"></div>
+<div class="wrap vh-copy">
+<span class="vh-kicker vh-in" style="--d:0s">Welcome to</span>
+<h1 class="vh-title vh-in" style="--d:.15s">Travel With Glen Shop</h1>
+<p class="vh-sub vh-in" style="--d:.35s">Your adventure starts here!</p>
+<div class="row vh-in" style="--d:.55s"><a class="btn btn-accent" href="/shop/">Browse all gear</a><a class="btn btn-ghost vh-ghost" href="{utm(C.MAIN + '/guide/', 'home')}">Plan the trip first</a></div>
+</div></section>"""
+
+def home_carousel_intro():
+    return """<section class="gear-intro"><div class="wrap narrow">
+<h2 class="gi-title" data-anim="left">Gear up for your next adventure</h2>
+<p data-anim="right">The gear and guidebooks Glen points travelers to, from packing cubes and plug adapters to the destination guides worth carrying. Every link goes to Amazon or Redbubble, so you buy with their shipping and returns.</p>
+</div></section>"""
+
+def home_carousel():
+    slides = "".join(
+        f'<a class="gc-slide{" is-on" if i == 0 else ""}" href="{path_of(CAT_BY_SLUG[COLL[k]["cat"]]["permalink"])}" aria-label="{esc(cap)}: shop {esc(COLL[k]["name"])}" {"" if i == 0 else "tabindex=-1 aria-hidden=true"}>'
+        f'<img src="/img/hero/{f}.webp" alt="" width="1280" height="720" loading="{"eager" if i == 0 else "lazy"}" decoding="async">'
+        f'<span class="gc-cap"><strong>{esc(COLL[k]["name"])}</strong>{esc(cap)}</span></a>'
+        for i, (f, cap, k) in enumerate(CAROUSEL) if k in COLL)
+    dots = "".join(f'<button type="button" class="gc-dot{" is-on" if i == 0 else ""}" aria-label="Show slide {i+1}"></button>' for i in range(len(CAROUSEL)))
+    return f"""<section class="gear-carousel"><div class="wrap">
+<h2 class="gc-title" data-anim="zoom">Travel gear and accessories that elevate your journeys</h2>
+<div class="gc" id="gc" data-anim="zoom" aria-roledescription="carousel" aria-label="Featured travel gear">{slides}
+<button type="button" class="gc-nav gc-prev" aria-label="Previous slide">&#8249;</button><button type="button" class="gc-nav gc-next" aria-label="Next slide">&#8250;</button>
+<div class="gc-dots">{dots}</div></div>
+</div></section>
+<script>
+(function(){{
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* hero: video plays once and holds its last frame; copy reveals as it finishes (or after 6.5s / immediately for reduced motion) */
+var hero=document.getElementById('video-hero'),v=document.getElementById('vh-video'),shown=false;
+function reveal(){{if(!shown){{shown=true;hero.classList.add('is-ready');}}}}
+if(reduce||!v){{reveal();if(v&&reduce){{try{{v.pause();}}catch(e){{}}}}}}else{{v.addEventListener('ended',reveal);v.addEventListener('error',reveal,true);setTimeout(reveal,6500);var p=v.play&&v.play();if(p&&p.catch)p.catch(reveal);}}
+/* entrance animations */
+var els=document.querySelectorAll('[data-anim]');
+if(reduce||!('IntersectionObserver' in window)){{els.forEach(function(e){{e.classList.add('in')}})}}else{{var io=new IntersectionObserver(function(es){{es.forEach(function(x){{if(x.isIntersecting){{x.target.classList.add('in');io.unobserve(x.target);}}}})}},{{threshold:.15}});els.forEach(function(e){{io.observe(e)}});}}
+/* carousel: auto-advance every 5s, pause on hover/focus, arrows and dots */
+var gc=document.getElementById('gc');if(!gc)return;var s=gc.querySelectorAll('.gc-slide'),d=gc.querySelectorAll('.gc-dot'),i=0,t=null;
+function go(n){{s[i].classList.remove('is-on');s[i].setAttribute('aria-hidden','true');s[i].tabIndex=-1;d[i].classList.remove('is-on');i=(n+s.length)%s.length;s[i].classList.add('is-on');s[i].removeAttribute('aria-hidden');s[i].removeAttribute('tabindex');d[i].classList.add('is-on');}}
+function play(){{if(!reduce&&!t)t=setInterval(function(){{go(i+1)}},5000);}}function stop(){{clearInterval(t);t=null;}}
+gc.querySelector('.gc-prev').onclick=function(){{go(i-1)}};gc.querySelector('.gc-next').onclick=function(){{go(i+1)}};
+d.forEach(function(b,k){{b.onclick=function(){{go(k)}}}});
+gc.addEventListener('mouseenter',stop);gc.addEventListener('mouseleave',play);gc.addEventListener('focusin',stop);gc.addEventListener('focusout',play);
+document.addEventListener('visibilitychange',function(){{document.hidden?stop():play()}});play();
+}})();
+</script>"""
+
 def build():
     if os.path.exists(DIST): shutil.rmtree(DIST)
     shutil.copytree(os.path.join(ROOT, "assets"), DIST)
@@ -222,20 +292,14 @@ def build():
         f'<strong>{esc(c["name"])}</strong><span>{esc(c["blurb"])}</span><em>{len(products_for_coll(c["key"]))} picks</em></a>'
         for c in C.COLLECTIONS if products_for_coll(c["key"]))
     glen_books = [BY_ID[i] for i in sorted(C.GLEN_BOOK_IDS) if i in BY_ID and BY_ID[i] in PRODUCTS]
-    body = f"""<section class="shop-hero"><div class="wrap">
-<span class="eyebrow">Travel With Glen Shop</span>
-<h1 class="h-display hero-h">What to bring on the trip</h1>
-<p class="lede">The gear and guidebooks Glen points travelers to, from packing cubes and plug adapters to the destination guides worth carrying. Every link goes to Amazon or Redbubble, so you buy with their shipping and returns.</p>
-<div class="row"><a class="btn btn-accent" href="/shop/">Browse all gear</a><a class="btn btn-ghost" href="{utm(C.MAIN + '/guide/', 'home')}">Plan the trip first</a></div>
-</div></section>
-<section class="section"><div class="wrap"><h2 class="h2">Shop by what you need</h2><div class="ctiles">{tiles}</div></div></section>
+    body = home_hero() + home_carousel_intro() + f"""<section class="section"><div class="wrap"><h2 class="h2" data-anim="left">Shop by what you need</h2><div class="ctiles" data-anim="zoom">{tiles}</div></div></section>""" + home_carousel() + f"""
 <section class="section section-sand"><div class="wrap"><h2 class="h2">Books by Glen</h2><p>Written from the road, published under the Travel With Glen name.</p>{grid(glen_books)}</div></section>
 <section class="section"><div class="wrap"><h2 class="h2">Guidebooks worth packing</h2>{grid([p for p in products_for_coll('guides') if p['id'] not in C.GLEN_BOOK_IDS][:8])}
 <p><a class="btn btn-forest" href="{path_of(CAT_BY_SLUG['guides']['permalink'])}">All guidebooks</a></p></div></section>
 <section class="section section-sand"><div class="wrap">{flywheel_box(COLL['guides'], ('/guide/', 'Start with a destination guide'), 'home')}</div></section>"""
     org = {"@context": "https://schema.org", "@type": "WebSite", "name": "Travel With Glen Shop", "url": C.SITE + "/",
            "publisher": {"@type": "Organization", "name": "Travel With Glen LLC", "url": C.MAIN + "/"}}
-    write("/", layout("Travel With Glen Shop | Travel Gear and Guidebooks", "Travel gear and guidebooks Glen recommends, from packing cubes and plug adapters to destination guides. Links go to Amazon and Redbubble.", "/", body, jsonld=org))
+    write("/", layout("Travel With Glen Shop | Travel Gear and Guidebooks", "Travel gear and guidebooks Glen recommends, from packing cubes and plug adapters to destination guides. Links go to Amazon and Redbubble.", "/", body, jsonld=org, extra_head=HOME_HEAD))
 
     # /shop/
     sections = "".join(

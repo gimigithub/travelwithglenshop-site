@@ -62,3 +62,51 @@
 .shop-hero .hero-h{max-width:22ch}
 .tip{margin-top:20px;padding:14px 16px;border-left:4px solid var(--accent);background:var(--sand);border-radius:8px}
 .tip p{margin:4px 0 0;color:var(--body)}
+
+/* ---- Home: video hero, gear intro, carousel, entrance motion (carried over from the old Elementor home) ---- */
+.video-hero{position:relative;min-height:min(78vh,720px);display:flex;align-items:center;overflow:hidden;background:#14231c;color:#fff}
+.vh-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vh-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,20,14,.72) 0%,rgba(8,20,14,.42) 55%,rgba(8,20,14,.15) 100%),linear-gradient(0deg,rgba(8,20,14,.45),rgba(8,20,14,0) 40%)}
+.vh-copy{position:relative;z-index:1;padding-top:56px;padding-bottom:56px}
+.vh-kicker{display:block;font-family:'Open Sans',var(--body-font,sans-serif);font-stretch:75%;font-size:clamp(16px,1.6vw,20px);letter-spacing:.14em;text-transform:uppercase;color:#F3C9A8}
+.vh-title{margin:6px 0 10px;font-family:'Londrina Shadow',var(--display);font-weight:400;font-size:clamp(52px,8.5vw,104px);line-height:.95;letter-spacing:.01em;text-transform:uppercase;max-width:9ch;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.vh-sub{margin:0 0 22px;font-family:'Open Sans',sans-serif;font-stretch:75%;font-size:clamp(20px,2.4vw,30px);color:#E9F1EC}
+.vh-ghost{color:#fff;border-color:rgba(255,255,255,.65)}
+.vh-ghost:hover{color:#fff;background:rgba(255,255,255,.12)}
+.vh-in{opacity:0;transform:translateX(-28px);transition:opacity .8s ease,transform .8s ease;transition-delay:var(--d,0s)}
+.video-hero.is-ready .vh-in{opacity:1;transform:none}
+.gear-intro{background:#14231c;color:#E3EEE8;text-align:center;padding:48px 0 44px}
+.gi-title{margin:0 0 12px;font-family:'Open Sans',sans-serif;font-stretch:75%;font-weight:600;font-size:clamp(26px,3vw,36px);text-transform:uppercase;letter-spacing:.02em;color:#fff}
+.gear-intro p{margin:0 auto;max-width:62ch;font-size:18px;color:#D3E2D9}
+.gear-carousel{background:linear-gradient(180deg,var(--forest-dark),#14231c);color:#fff;padding:52px 0 60px}
+.gc-title{margin:0 auto 22px;max-width:24ch;text-align:center;font-family:var(--display);font-weight:800;font-size:clamp(24px,3vw,34px);line-height:1.15;color:#fff}
+.gc{position:relative;max-width:960px;margin:0 auto;aspect-ratio:16/9;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);background:#0b1a13}
+.gc-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;color:#fff;text-decoration:none}
+.gc-slide.is-on{opacity:1;z-index:1}
+.gc-slide img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.06);transition:transform 6s ease}
+.gc-slide.is-on img{transform:scale(1)}
+.gc-cap{position:absolute;left:0;right:0;bottom:0;padding:48px 22px 46px;background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,0));display:flex;flex-direction:column;gap:2px;font-size:16px}
+.gc-cap strong{font-family:var(--display);font-size:22px}
+.gc-slide:hover .gc-cap strong{text-decoration:underline}
+.gc-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.gc-nav:hover,.gc-nav:focus-visible{background:var(--accent)}
+.gc-prev{left:12px}.gc-next{right:12px}
+.gc-dots{position:absolute;left:0;right:0;bottom:14px;z-index:2;display:flex;justify-content:center;gap:8px}
+.gc-dot{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.5);cursor:pointer}
+.gc-dot.is-on{background:#fff;transform:scale(1.25)}
+[data-anim]{opacity:0;transition:opacity .8s ease,transform .8s ease}
+[data-anim="left"]{transform:translateX(-36px)}
+[data-anim="right"]{transform:translateX(36px)}
+[data-anim="zoom"]{transform:scale(.94)}
+[data-anim].in{opacity:1;transform:none}
+@media (max-width:760px){
+  .video-hero{min-height:72vh}
+  .vh-shade{background:linear-gradient(0deg,rgba(8,20,14,.8) 0%,rgba(8,20,14,.45) 60%,rgba(8,20,14,.3) 100%)}
+  .gc{aspect-ratio:4/3;border-radius:12px}
+  .gc-nav{display:none}
+  .gc-cap{padding:40px 14px 38px;font-size:14px}.gc-cap strong{font-size:18px}
+}
+@media (prefers-reduced-motion: reduce){
+  .vh-in,[data-anim]{opacity:1;transform:none;transition:none}
+  .gc-slide,.gc-slide img{transition:none;transform:none}
+}
