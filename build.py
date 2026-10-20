@@ -214,7 +214,7 @@ def write(path, content, sitemap=True, lastmod=None):
 
 # ---------- home hero, carousel, motion (carried over from the WordPress/Elementor home page) ----------
 HAS_VIDEO = os.path.exists(os.path.join(ROOT, "assets", "video", "shop-intro.mp4"))
-HOME_HEAD = (('<link rel="preload" as="image" href="/video/shop-intro-poster.webp">' if HAS_VIDEO else '<link rel="preload" as="image" href="/img/hero/gear-14.webp">')
+HOME_HEAD = ('<link rel="preload" as="image" href="/img/hero/taormina-street.webp">'
     + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Londrina+Shadow&family=Open+Sans:wdth,wght@75,400;75,600&display=swap">')
 
 # Slides from the old home carousel, each now pointing at the collection it shows.
@@ -229,10 +229,11 @@ CAROUSEL = [
 ]
 
 def home_hero():
-    media = ('<video class="vh-video" id="vh-video" muted playsinline autoplay preload="auto" poster="/video/shop-intro-poster.webp" aria-hidden="true">'
-             '<source src="/video/shop-intro.webm" type="video/webm"><source src="/video/shop-intro.mp4" type="video/mp4"></video>'
-             if HAS_VIDEO else '<img class="vh-video" src="/img/hero/gear-14.webp" alt="" aria-hidden="true">')
-    return f"""<section class="video-hero" id="video-hero">{media}<div class="vh-shade"></div>
+    # Same sequence as the old Elementor hero: logo-reveal video plays once, then fades to the
+    # Taormina street photo while the welcome copy slides in.
+    video = ('<video class="vh-video" id="vh-video" muted playsinline preload="auto" poster="/video/shop-intro-poster.webp" aria-hidden="true">'
+             '<source src="/video/shop-intro.mp4" type="video/mp4"></video>' if HAS_VIDEO else '')
+    return f"""<section class="video-hero" id="video-hero"><img class="vh-bg" src="/img/hero/taormina-street.webp" alt="" width="1600" height="900" fetchpriority="high">{video}<div class="vh-shade"></div>
 <div class="wrap vh-copy">
 <span class="vh-kicker vh-in" style="--d:0s">Welcome to</span>
 <h1 class="vh-title vh-in" style="--d:.15s">Travel With Glen Shop</h1>
@@ -262,10 +263,11 @@ def home_carousel():
 <script>
 (function(){{
 var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-/* hero: video plays once and holds its last frame; copy reveals as it finishes (or after 6.5s / immediately for reduced motion) */
+/* hero: logo video plays once, fades to the street photo, then the copy slides in (immediately for reduced motion) */
 var hero=document.getElementById('video-hero'),v=document.getElementById('vh-video'),shown=false;
 function reveal(){{if(!shown){{shown=true;hero.classList.add('is-ready');}}}}
-if(reduce||!v){{reveal();if(v&&reduce){{try{{v.pause();}}catch(e){{}}}}}}else{{v.addEventListener('ended',reveal);v.addEventListener('error',reveal,true);setTimeout(reveal,6500);var p=v.play&&v.play();if(p&&p.catch)p.catch(reveal);}}
+function finish(){{hero.classList.add('video-done');reveal();}}
+if(reduce||!v){{finish();}}else{{hero.classList.add('video-on');v.addEventListener('ended',finish);v.addEventListener('error',finish,true);setTimeout(finish,9000);var p=v.play&&v.play();if(p&&p.catch)p.catch(finish);}}
 /* entrance animations */
 var els=document.querySelectorAll('[data-anim]');
 if(reduce||!('IntersectionObserver' in window)){{els.forEach(function(e){{e.classList.add('in')}})}}else{{var io=new IntersectionObserver(function(es){{es.forEach(function(x){{if(x.isIntersecting){{x.target.classList.add('in');io.unobserve(x.target);}}}})}},{{threshold:.15}});els.forEach(function(e){{io.observe(e)}});}}
