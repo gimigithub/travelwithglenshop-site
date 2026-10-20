@@ -1,0 +1,19 @@
+name: Export WooCommerce shop data
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export JSON, sitemaps and images
+        run: python3 scripts/export_woo.py
+      - name: Commit
+        run: |
+          git config user.name "twg-export-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add raw
+          git commit -m "Export live WooCommerce data from travelwithglenshop.com" || echo "nothing to commit"
+          git push
