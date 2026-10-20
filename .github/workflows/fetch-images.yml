@@ -1,0 +1,17 @@
+name: Fetch shop images
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/fetch_images.py
+      - run: |
+          git config user.name "twg-export-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets raw/images_manifest.json
+          git commit -m "Fetch product and category images from Jetpack CDN" || echo "nothing to commit"
+          git push
