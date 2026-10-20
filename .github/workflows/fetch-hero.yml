@@ -18,12 +18,13 @@ jobs:
           for n in 11 12 13 14 15 16 17; do
             curl -sSfL -A "$UA" -o raw/hero/carousel-$n.png "https://i0.wp.com/travelwithglenshop.com/wp-content/uploads/2024/11/Untitled-design-$n.png" || echo "FAIL carousel $n"
           done
-          for host in travelwithglenshop.com i0.wp.com/travelwithglenshop.com; do
+          curl -sSfL -A "$UA" -o raw/hero/hero-bg.png "https://i0.wp.com/travelwithglenshop.com/wp-content/uploads/2024/11/travel-with-glen-shop.png" || echo "FAIL hero-bg"
+          if false; then for host in travelwithglenshop.com i0.wp.com/travelwithglenshop.com; do
             code=$(curl -sSL -A "$UA" -o raw/hero/intro.mp4 -w '%{http_code}' "https://$host/wp-content/uploads/2024/11/travel-with-glen-shop-video-Intro-1.mp4" || true)
             echo "video via $host: $code $(stat -c%s raw/hero/intro.mp4 2>/dev/null)"
             if [ "$code" = "200" ] && [ "$(stat -c%s raw/hero/intro.mp4)" -gt 1000000 ]; then break; fi
             rm -f raw/hero/intro.mp4
-          done
+          done; fi
           ls -l raw/hero
       - name: Commit
         run: |
