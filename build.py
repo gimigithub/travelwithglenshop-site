@@ -67,6 +67,8 @@ def bullets(p, n=4):
     t = txt(p["short_description"])
     t = re.sub(r"^About this item\s*", "", t, flags=re.I)
     parts = [x.strip(" ;.") for x in re.split(r";\s+|\.\s+(?=[A-Z])|\s•\s", t) if len(x.strip()) > 25]
+    junk = re.compile(r"return|refund|shipping option|drop off|previous page|next page|click|add to cart|customer service|warranty|guarantee|satisf|contact us|store|brand story|from the brand", re.I)
+    parts = [x for x in parts if not junk.search(x)]
     out = []
     for x in parts[:n]:
         out.append(x if len(x) <= 190 else x[:187].rsplit(" ", 1)[0] + "...")
@@ -222,7 +224,7 @@ def build():
     glen_books = [BY_ID[i] for i in sorted(C.GLEN_BOOK_IDS) if i in BY_ID and BY_ID[i] in PRODUCTS]
     body = f"""<section class="shop-hero"><div class="wrap">
 <span class="eyebrow">Travel With Glen Shop</span>
-<h1 class="h-display">What to bring on the trip</h1>
+<h1 class="h-display hero-h">What to bring on the trip</h1>
 <p class="lede">The gear and guidebooks Glen points travelers to, from packing cubes and plug adapters to the destination guides worth carrying. Every link goes to Amazon or Redbubble, so you buy with their shipping and returns.</p>
 <div class="row"><a class="btn btn-accent" href="/shop/">Browse all gear</a><a class="btn btn-ghost" href="{utm(C.MAIN + '/guide/', 'home')}">Plan the trip first</a></div>
 </div></section>
@@ -268,8 +270,9 @@ def build():
         main_cat = CAT_BY_SLUG[coll["cat"]]
         items = [("/", "Home"), (path_of(main_cat["permalink"]), coll["name"]), (p["_path"], short_name(p["_name"], 60))]
         gallery = "".join(img_tag(im, p["_name"] if i == 0 else "", "gimg", eager=(i == 0)) for i, im in enumerate(p["_imgs"]))
-        bl = bullets(p)
-        quick = ('<h2 class="h3">Quick look</h2><ul class="quick">' + "".join(f"<li>{esc(b)}</li>" for b in bl) + "</ul>") if bl else ""
+        bl = bullets(p) if p["_merchant"] == "Redbubble" else []
+        quick = ('<h2 class="h3">About this design</h2><ul class="quick">' + "".join(f"<li>{esc(b)}</li>" for b in bl) + "</ul>") if bl else ""
+        quick += f'<div class="tip"><strong>Before you buy</strong><p>{esc(coll["tip"])}</p></div>'
         badge = '<span class="badge badge-inline">By Glen</span>' if p["id"] in C.GLEN_BOOK_IDS else ""
         related = [x for x in products_for_coll(p["_coll"]) if x["id"] != p["id"]][:4]
         body = f"""<div class="wrap page-pad">{crumbs_html(items)}
