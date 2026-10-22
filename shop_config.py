@@ -67,16 +67,25 @@ RETIRED_PRODUCT_IDS = {
 }
 
 # Duplicate listings: id -> id of the product page that replaces it (301).
-DUPLICATES = {2081: 2055}  # BAGAIL cubes, the "variable" copy was misconfigured
+DUPLICATES = {
+    2081: 2055,  # BAGAIL cubes, the "variable" copy was misconfigured
+    2366: 2362,  # Glen's Florida Keys Travel Guide 2025: ASIN B0DLTDL8PZ is gone from Amazon (404, Oct 22 2026); 301 to Bargain Traveler's Handbook until a new edition is live
+}
 
 # Fixes for links in the WordPress data.
 ASIN_OVERRIDES = {
     1839: "B0CBJKLGDB",  # amzn.to/3NSz3Nf resolved Oct 20
     1785: "B07SLGHB24",  # amzn.to/3UFuzNL resolved Oct 20
     1699: "B09N72FMH5",  # amzn.to/3AFb2Ga resolved Oct 20 (GL.iNet Opal travel router)
+    2256: "B0DZ1PKCWT",  # B0BY2NZK9Y 404 on Oct 22 2026; same slim 10000mAh charger with built-in cables
+    2572: "B0DSL1HJNR",  # B0DNFQB78J 404 on Oct 22 2026; same mini dual-head shaver, new listing
 }
 # Products with no Amazon link at all (were set up as "sellable"): link to a tagged Amazon search until an ASIN is added above.
-SEARCH_FALLBACK = {1812: "siliteelon women's stain shield dress shirt wrinkle free"}
+SEARCH_FALLBACK = {
+    1812: "siliteelon women's stain shield dress shirt wrinkle free",
+    2453: "bath and body works travel size shower gel",  # B0D4SGVS3Z 404 on Oct 22 2026, no same listing
+    2581: "mini portable electric shaver travel usb c",  # B0CXHFTRM5 404 on Oct 22 2026, no same listing
+}
 
 # Glen's own books get a "By Glen" badge.
 GLEN_BOOK_IDS = {2366, 2364, 2362}
