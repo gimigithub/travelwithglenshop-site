@@ -116,3 +116,47 @@ CONTACT = {
     "phone": "(877) 221-7615",
     "address": "100 East New York Avenue, Suite 103 PMB1010, DeLand, FL 32724",
 }
+
+# ---------- Travel kits ----------
+# A kit is a curated packing page, not a bundled product: each item links to Amazon on its own.
+# "id" = a product already in the catalog. "search" = an item not in the catalog yet; it links to a tagged
+# Amazon search until Glen picks a specific listing (then add it to the catalog and switch to "id").
+# "why" is the one-line reason it is in the kit. Glen: replace these with your own words where you can.
+KITS = [
+    {"slug": "costa-rica", "name": "Costa Rica Travel Kit",
+     "title": "Costa Rica Packing Kit: What to Bring for Rainforest, Beach and Trail",
+     "desc": "Glen's Costa Rica packing kit: rain and river gear, sun and bug protection, trail and wildlife gear, and the guidebooks worth reading first.",
+     "lede": "Everything on Glen's Costa Rica list in one place, grouped by what the day throws at you: rain, river, sun, bugs and trail.",
+     "intro": "Costa Rica packs differently from a city trip. You can get sun, a downpour and a muddy trail in the same afternoon, especially in the green season (roughly May to November). This kit covers those days. Buy only what your itinerary needs.",
+     "skip": ["A plug adapter. Costa Rica uses the same Type A/B outlets and 120V power as the US.",
+              "Heavy jeans and dress clothes. Quick-dry layers work better almost everywhere outside San José.",
+              "Full-size toiletries. Pharmacies and supermarkets are easy to find in towns."],
+     "guides": [("/guanacaste-guide/", "Glen's free Guanacaste guide"), ("/where-to-stay-in-costa-rica-2026-guide/", "Where to stay in Costa Rica"), ("/best-time-to-visit-costa-rica-2026/", "Best time to visit Costa Rica")],
+     "verified": ("/destinations", "Vetted businesses by destination"),
+     "sections": [
+        {"name": "Rain and river days", "items": [
+            {"id": 2206, "why": "Keeps a phone, passport and camera dry on boat tours, river floats and sudden storms."},
+            {"id": 2182, "why": "For river crossings and wet trails when you do not want to change shoes."},
+            {"search": "packable rain jacket lightweight travel", "name": "Packable rain jacket", "why": "Green season rain usually comes in the afternoon. A jacket that folds into its own pocket earns its space."},
+            {"search": "water shoes quick dry hiking", "name": "Quick-dry water shoes", "why": "Rocky beaches, waterfalls and river entries are easier on your feet with these."}]},
+        {"name": "Sun, bugs and heat", "items": [
+            {"id": 2212, "why": "Long sleeves with UPF 50 cover you from sun and bugs at the same time."},
+            {"search": "reef safe mineral sunscreen spf 50", "name": "Reef-safe mineral sunscreen", "why": "Bring more than you think. Sunscreen costs much more in beach towns."},
+            {"search": "picaridin insect repellent travel size", "name": "Insect repellent (picaridin)", "why": "For dusk on the coast and any rainforest walk."},
+            {"search": "quick dry microfiber travel towel", "name": "Quick-dry travel towel", "why": "Light, dries fast in humid air, and doubles as a beach blanket."}]},
+        {"name": "Trails and wildlife", "items": [
+            {"search": "lightweight waterproof hiking boots", "name": "Lightweight waterproof hiking boots", "why": "Arenal, Monteverde and Rincón de la Vieja trails get muddy. Break them in before the trip."},
+            {"search": "compact binoculars for travel bird watching", "name": "Compact binoculars", "why": "Sloths, toucans and monkeys are often high in the canopy. A small pair makes the guided walks far better."},
+            {"id": 2170, "why": "Safe water on long hikes and in remote spots, and less plastic."},
+            {"id": 2220, "why": "Blisters, cuts and scrapes on the trail. Pack it in your daypack, not your suitcase."},
+            {"search": "rechargeable headlamp lightweight", "name": "Rechargeable headlamp", "why": "Night walks are one of the best wildlife experiences in the country."}]},
+        {"name": "Pack and power", "items": [
+            {"id": 2116, "why": "Separates wet, dirty and clean clothes, which matters in the humidity."},
+            {"id": 2450, "why": "TSA-size bottles for a carry-on only trip."},
+            {"id": 2248, "why": "Long days of photos and maps drain a phone fast."},
+            {"id": 2131, "why": "Keeps your passport, cards and boarding passes in one place."}]},
+        {"name": "Read before you go", "items": [
+            {"id": 2340, "why": "Full country guide for planning regions and routes."},
+            {"id": 2362, "why": "Glen's own book on traveling well for less."}]},
+     ]},
+]

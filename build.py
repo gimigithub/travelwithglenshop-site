@@ -135,7 +135,7 @@ def layout(title, desc, path, body, noindex=False, jsonld=None, og_image=None, e
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap">
 <a href="/" class="brand" aria-label="Travel With Glen Shop home"><img class="brand-logo" src="/logo-twg.webp" alt="" width="44" height="44"><span class="brand-name">Travel With Glen <span class="shop-word">Shop</span></span></a>
-<nav class="nav" aria-label="Main"><a href="/shop/">All gear</a>{nav}
+<nav class="nav" aria-label="Main"><a href="/shop/">All gear</a><a href="/kits/">Kits</a>{nav}
 <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"><svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg><svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
 <a href="{utm(C.MAIN + '/guide/', 'nav')}" class="nav-cta">Plan a trip</a>
 </nav></div></header>
@@ -159,7 +159,7 @@ def footer():
 <a href="{utm(C.VERIFIED + '/directory', 'footer')}">Verified Network: vetted local businesses</a>
 <a href="/">Travel With Glen Shop: what to bring</a>
 <a href="{utm(C.GDFIS + '/', 'footer')}">gdfis.com: how Glen builds it (for creators)</a></div>
-<div class="col"><strong>Shop</strong><a href="/shop/">All gear</a>{''.join(f'<a href="{path_of(CAT_BY_SLUG[c["cat"]]["permalink"])}">{esc(c["name"])}</a>' for c in C.COLLECTIONS)}<a href="/blog/">Gear notes</a></div>
+<div class="col"><strong>Shop</strong><a href="/shop/">All gear</a><a href="/kits/">Travel kits</a>{''.join(f'<a href="{path_of(CAT_BY_SLUG[c["cat"]]["permalink"])}">{esc(c["name"])}</a>' for c in C.COLLECTIONS)}<a href="/blog/">Gear notes</a></div>
 <div class="col"><strong>About</strong><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/affiliate-disclosure/">Affiliate disclosure</a><a href="/privacy-policy/">Privacy</a><a href="/terms-and-conditions/">Terms</a></div>
 </div><div class="wrap legal">&copy; {YEAR} Travel With Glen LLC. As an Amazon Associate, Travel With Glen earns from qualifying purchases.</div></footer>"""
 
@@ -294,7 +294,8 @@ def build():
         f'<strong>{esc(c["name"])}</strong><span>{esc(c["blurb"])}</span><em>{len(products_for_coll(c["key"]))} picks</em></a>'
         for c in C.COLLECTIONS if products_for_coll(c["key"]))
     glen_books = [BY_ID[i] for i in sorted(C.GLEN_BOOK_IDS) if i in BY_ID and BY_ID[i] in PRODUCTS]
-    body = home_hero() + home_carousel_intro() + f"""<section class="section"><div class="wrap"><h2 class="h2" data-anim="left">Shop by what you need</h2><div class="ctiles" data-anim="zoom">{tiles}</div></div></section>""" + home_carousel() + f"""
+    body = home_hero() + home_carousel_intro() + f"""<section class="section"><div class="wrap"><h2 class="h2" data-anim="left">Shop by what you need</h2><div class="ctiles" data-anim="zoom">{tiles}</div></div></section>
+<section class="section section-sand"><div class="wrap"><h2 class="h2">Travel kits</h2><p>Packing lists built around a trip. Start with the <a href="/kits/costa-rica/">Costa Rica Travel Kit</a>: rain, river, sun, bugs and trail in one list.</p><p><a class="btn btn-forest" href="/kits/">See all kits</a></p></div></section>""" + home_carousel() + f"""
 <section class="section section-sand"><div class="wrap"><h2 class="h2">Books by Glen</h2><p>Written from the road, published under the Travel With Glen name.</p>{grid(glen_books)}</div></section>
 <section class="section"><div class="wrap"><h2 class="h2">Guidebooks worth packing</h2>{grid([p for p in products_for_coll('guides') if p['id'] not in C.GLEN_BOOK_IDS][:8])}
 <p><a class="btn btn-forest" href="{path_of(CAT_BY_SLUG['guides']['permalink'])}">All guidebooks</a></p></div></section>
@@ -379,9 +380,79 @@ def build():
         f'<div class="wrap page-pad narrow"><h1 class="h1">That page is gone</h1><p class="lede">The shop moved and some old items were retired. Here is where the gear lives now.</p><div class="row wraprow">{tiles404}</div>'
         f'<p><a class="btn btn-accent" href="/shop/">Browse all gear</a></p></div>', noindex=True))
 
+    build_kits()
     write_redirects(); write_sitemap()
     open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {C.SITE}/sitemap.xml\n")
     print(f"Built {len(WRITTEN)} pages, {len(PRODUCTS)} products, {len(RETIRED)} retired, {len(REDIRECTS)} redirect rules")
+
+# ---------- travel kits ----------
+def kit_item(item, kit_slug):
+    coll = "kit-" + kit_slug
+    if "id" in item:
+        p = BY_ID[item["id"]]
+        name, link, merch, pid = short_name(p["_name"]), p["_link"], p["_merchant"], str(p["id"])
+        im = p["_imgs"][0] if p["_imgs"] else None
+        title = f'<a href="{p["_path"]}" class="kit-name">{esc(name)}</a>'
+        badge = '<span class="badge badge-inline">By Glen</span>' if p["id"] in C.GLEN_BOOK_IDS else ""
+    else:
+        name, merch, pid, im, badge = item["name"], "Amazon", "search:" + item["search"], None, ""
+        link = f"https://www.amazon.com/s?k={quote_plus(item['search'])}&tag={C.AMAZON_TAG}"
+        title = f'<span class="kit-name">{esc(name)}</span>'
+    label = "See options on Amazon" if "search" in item else f"View on {merch}"
+    btn = (f'<a class="pcard-buy" href="{esc(link)}" target="_blank" rel="sponsored nofollow noopener" '
+           f'data-aff="{merch.lower()}" data-pid="{esc(pid)}" data-coll="{coll}">{label} &rarr;</a>')
+    return (f'<li class="kit-item"><div class="kit-thumb">{img_tag(im, "", "kit-img")}</div>'
+            f'<div class="kit-text">{badge}{title}<p>{esc(item["why"])}</p></div><div class="kit-buy">{btn}</div></li>')
+
+def kit_asins(kit):
+    out = []
+    for s in kit["sections"]:
+        for it in s["items"]:
+            if "id" in it and BY_ID[it["id"]]["_coll"] != "guides":
+                m = re.search(r"/dp/([A-Z0-9]{10})", BY_ID[it["id"]]["_link"])
+                if m: out.append(m.group(1))
+    return out
+
+def cart_link(asins):
+    q = "&".join(f"ASIN.{i}={a}&Quantity.{i}=1" for i, a in enumerate(asins, 1))
+    return f"https://www.amazon.com/gp/aws/cart/add.html?AssociateTag={C.AMAZON_TAG}&{q}"
+
+def build_kits():
+    if not getattr(C, "KITS", None): return
+    cards = []
+    for k in C.KITS:
+        path = f"/kits/{k['slug']}/"
+        n = sum(len(s["items"]) for s in k["sections"])
+        items = [("/", "Home"), ("/kits/", "Travel kits"), (path, k["name"])]
+        secs = "".join(f'<section class="kit-sec"><h2 class="h2">{esc(s["name"])}</h2><ul class="kit-list">'
+                       + "".join(kit_item(it, k["slug"]) for it in s["items"]) + "</ul></section>" for s in k["sections"])
+        asins = kit_asins(k)
+        cart = (f'<p class="kit-cart"><a class="btn btn-accent" href="{esc(cart_link(asins))}" target="_blank" rel="sponsored nofollow noopener" '
+                f'data-aff="amazon" data-pid="cart" data-coll="kit-{k["slug"]}">Add the {len(asins)} gear picks to your Amazon cart &rarr;</a>'
+                f'<small>You review everything in your Amazon cart before buying. Remove what you already own.</small></p>') if asins else ""
+        skip = "".join(f"<li>{esc(x)}</li>" for x in k["skip"])
+        g_links = "".join(f'<li><a href="{utm(C.MAIN + h, "kit-" + k["slug"])}">{esc(l)} &rarr;</a></li>' for h, l in k["guides"])
+        v_href, v_label = k["verified"]
+        body = f"""<div class="wrap page-pad">{crumbs_html(items)}
+<h1 class="h1">{esc(k['name'])}</h1><p class="lede">{esc(k['lede'])}</p>
+<p>{esc(k['intro'])}</p>{cart}
+<nav class="kit-toc" aria-label="Kit sections">{''.join(f'<a href="#s{i}">{esc(s["name"])}</a>' for i, s in enumerate(k["sections"]))}</nav>
+{secs.replace('<section class="kit-sec">', '<section class="kit-sec">', 1)}
+<section class="kit-sec tip"><strong>Leave these at home</strong><ul>{skip}</ul></section>
+<aside class="flywheel"><div><span class="eyebrow">Planning the trip?</span><ul class="kit-guides">{g_links}</ul><small>Free guides on travelwithglen.com</small></div>
+<div><span class="eyebrow">Need someone local you can trust?</span><a href="{utm(C.VERIFIED + v_href, 'kit-' + k['slug'])}">{esc(v_label)} &rarr;</a><small>The Travel With Glen Verified Network</small></div></aside>
+</div>"""
+        for i in range(len(k["sections"])):
+            body = body.replace('<section class="kit-sec"><h2', f'<section class="kit-sec" id="s{i}"><h2', 1)
+        ld = [crumbs_ld(items), {"@context": "https://schema.org", "@type": "ItemList", "name": k["name"], "numberOfItems": n,
+              "itemListElement": [{"@type": "ListItem", "position": j + 1, "name": html.unescape(it.get("name") or short_name(BY_ID[it["id"]]["_name"]))}
+                                  for j, it in enumerate([it for s in k["sections"] for it in s["items"]])]}]
+        write(path, layout(f"{k['title']} | Travel With Glen Shop", k["desc"], path, body, jsonld=ld))
+        cards.append(f'<a class="ctile" href="{path}"><strong>{esc(k["name"])}</strong><span>{esc(k["lede"])}</span><em>{n} items</em></a>')
+    items = [("/", "Home"), ("/kits/", "Travel kits")]
+    write("/kits/", layout("Travel Kits: Packing Lists by Trip | Travel With Glen Shop", "Ready-made packing kits from Travel With Glen, built around the trips Glen covers.", "/kits/",
+          f'<div class="wrap page-pad">{crumbs_html(items)}<h1 class="h1">Travel kits</h1><p class="lede">Packing lists built around a trip, not a product category. Pick your trip, take what you need.</p><div class="ctiles">{"".join(cards)}</div></div>',
+          jsonld=crumbs_ld(items)))
 
 _coll_cache = {}
 def products_for_coll(key):

@@ -115,3 +115,20 @@
 .video-hero.video-done .vh-video{opacity:0;pointer-events:none}
 .video-hero .vh-shade{transition:opacity .8s ease}
 .video-hero.video-on:not(.video-done) .vh-shade{opacity:0}
+
+/* Travel kits */
+.kit-toc{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.kit-toc a{padding:6px 12px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);font-size:14px}
+.kit-sec{margin:32px 0}
+.kit-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.kit-item{display:grid;grid-template-columns:88px 1fr auto;gap:16px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.kit-thumb{width:88px;height:88px;background:#fff;border-radius:8px;padding:6px}
+.kit-thumb img,.kit-thumb .noimg{width:100%;height:100%;object-fit:contain;min-height:0}
+.kit-name{font-weight:700;color:var(--ink);text-decoration:none}
+a.kit-name:hover{color:var(--link)}
+.kit-text p{margin:4px 0 0;color:var(--body)}
+.kit-cart{display:flex;flex-direction:column;gap:6px;align-items:flex-start;margin:20px 0}
+.kit-cart small{color:var(--muted)}
+.kit-guides{list-style:none;padding:0;margin:4px 0;display:flex;flex-direction:column;gap:4px}
+@media (max-width:640px){.kit-item{grid-template-columns:64px 1fr}.kit-thumb{width:64px;height:64px}.kit-buy{grid-column:1/-1}.kit-buy .pcard-buy{display:block}}
+.kit-text .badge-inline{margin-right:8px}
